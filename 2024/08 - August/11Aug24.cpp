@@ -5,20 +5,26 @@ class Solution
     vector<int> JobScheduling(Job arr[], int n) 
     { 
         // your code here
-        priority_queue<pair<int,int>>q;
-        vector<int>v(n+1);
-        for(int i=0;i<n+1;i++) v[i]=i;
-        for(int i=0;i<n;i++) q.push({arr[i].profit,arr[i].dead});
-        int Count=0,Profit=0;
-        while(!q.empty()){
-            auto x=q.top();
-            int prof=x.first;
-            int t=x.second;
-            q.pop();
-            int time=v[t];
-            while(time!=v[time]) time=v[time];
-            if(v[time])Count++,Profit+=prof,v[time]--;
-        }
-        return {Count,Profit};
+        vector<int>ans;
+       sort(arr,arr+n,[&](Job a,Job b){
+           return (a.profit == b.profit)?a.dead < b.dead:a.profit > b.profit;
+       });
+       int ct = 0;
+       int profit = 0;
+       vector<int>timeline(n+1,0);
+       for(int i=0;i<n;i++){
+           int st = arr[i].dead-1;
+           if(st < 0)continue;
+           while(timeline[st]==1){
+               st--;
+           }
+           if(st < 0)continue;
+           timeline[st] = 1;
+           ct++;
+           profit += arr[i].profit;
+       }
+       ans.push_back(ct);
+       ans.push_back(profit);
+       return ans;
     } 
 };
